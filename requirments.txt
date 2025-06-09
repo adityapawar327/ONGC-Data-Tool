@@ -1,0 +1,27 @@
+# Core Streamlit and Data Processing
+streamlit
+pandas
+numpy
+
+# Database connectivity
+sqlalchemy
+psycopg2-binary
+
+# Excel/File handling
+openpyxl
+xlrd
+
+# String matching and fuzzy search
+fuzzywuzzy[speedup]
+
+# LangChain and AI components
+langchain
+langchain-community
+langchain-core
+langchain-ollama
+
+# Vector store and embeddings
+faiss-cpu
+
+# Additional utilities that might be needed
+fuzzywuzzy[speedup]
