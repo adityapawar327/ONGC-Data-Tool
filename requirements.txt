@@ -25,4 +25,3 @@ faiss-cpu
 
 # Additional utilities that might be needed
 fuzzywuzzy[speedup]
-
