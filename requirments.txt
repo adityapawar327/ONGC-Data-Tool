@@ -26,9 +26,3 @@ faiss-cpu
 # Additional utilities that might be needed
 fuzzywuzzy[speedup]
 
-
-
-#Update
-#git add .
-#git commit -m "Descriptive message about changes"
-#git push
