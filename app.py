@@ -18,6 +18,7 @@ from analyze import analyze_app
 from ai import ai_chat
 from searching import fuzzy_search_ui
 from data_type_wise import data_type_wise_app  # Import the new module
+from label import label_app
 
 # PostgreSQL connection string
 DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
@@ -35,7 +36,8 @@ with st.sidebar:
             "📊 Summary of Data Entry",
             "📈 Data Type Wise", 
             "🤖 AI Assistant",
-            "🔍 Search"
+            "🔍 Search",
+            "📑 Create Labels"
         ]
     )
 
@@ -177,3 +179,7 @@ elif menu == "🤖 AI Assistant":
     
 elif menu == "🔍 Search":
     fuzzy_search_ui()
+
+elif menu == "📑 Create Labels":
+    # Launch the label creation functionality
+    label_app()

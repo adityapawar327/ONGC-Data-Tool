@@ -15,6 +15,26 @@ def standardize_datasets():
         "Sequence_No", "Sequence_Range", "Swath", "FSP", "LSP", "FFID", "LFID", 
         "Sail_Shot_No", "File_From", "File_To", "Command", "Remarks"
     ]
+
+    # Words to remove from area names
+    REMOVE_WORDS = [
+        "raw", "data", "processing", "processed", "seismic", "dataset", "files",
+        "report", "final", "updated", "revision", "rev", "version", "ver"
+    ]
+    
+    def extract_area_name(title):
+        """Extract area name from title by removing common words"""
+        if not title:
+            return ""
+        
+        # Convert to lowercase and split
+        words = title.lower().split()
+        
+        # Remove unwanted words
+        cleaned_words = [w for w in words if w not in REMOVE_WORDS]
+        
+        # Join remaining words and capitalize first letter of each word
+        return " ".join(word.capitalize() for word in cleaned_words if word.strip())
     
     # Enhanced fuzzy mapping rules with synonyms and abbreviations
     FUZZY_MAPPINGS = {
@@ -77,7 +97,10 @@ def standardize_datasets():
                 'rcv': 'receiver',
                 'id': 'identification',
                 'sp': 'shot point',
-                'fid': 'file identification'
+                'fid': 'file identification',
+                'area': 'area name block',
+                'block': 'area name block',
+                'loc': 'location'
             }
             
             words = text.split()
@@ -164,19 +187,33 @@ def standardize_datasets():
             available_cols = list(df.columns)
             used_cols = []
             
+            # Try to extract area name from filename if not found in columns
+            area_from_title = extract_area_name(filename)
+            
             for master_col in MASTER_SCHEMA:
                 match, score, match_type = find_best_column_match(master_col, 
                     [c for c in available_cols if c not in used_cols])
                 
                 if match:
-                    result_df[master_col] = df[match]
-                    mappings[master_col] = match
-                    scores[master_col] = (score, match_type)
+                    if master_col == "Area Name / Block" and score < 0.6:
+                        # Use extracted area name if column match confidence is low
+                        result_df[master_col] = area_from_title
+                        mappings[master_col] = f"Extracted from title: {area_from_title}"
+                        scores[master_col] = (0.7, "title_extraction")
+                    else:
+                        result_df[master_col] = df[match]
+                        mappings[master_col] = match
+                        scores[master_col] = (score, match_type)
                     used_cols.append(match)
                 else:
-                    result_df[master_col] = None
-                    mappings[master_col] = "MISSING"
-                    scores[master_col] = (0, "no_match")
+                    if master_col == "Area Name / Block" and area_from_title:
+                        result_df[master_col] = area_from_title
+                        mappings[master_col] = f"Extracted from title: {area_from_title}"
+                        scores[master_col] = (0.7, "title_extraction")
+                    else:
+                        result_df[master_col] = None
+                        mappings[master_col] = "MISSING"
+                        scores[master_col] = (0, "no_match")
             
             return result_df, mappings, scores
         
@@ -224,26 +261,55 @@ def standardize_datasets():
                 if matched > 0:
                     st.metric("Avg Confidence", f"{avg_confidence:.1%}")
         
-        # Show standardized data
-        st.markdown("### 📊 Standardized Data")
-        for filename, std_df in results:
-            st.subheader(f"📄 {filename}")
-            st.dataframe(std_df)
-        
-        # Download buttons
-        st.markdown("### 📥 Downloads")
-        for filename, std_df in results:
-            buffer = BytesIO()
-            std_df.to_excel(buffer, index=False, engine='openpyxl')
-            buffer.seek(0)
-            
-            st.download_button(
-                label=f"Download {filename}",
-                data=buffer,
-                file_name=f"standardized_{filename.split('.')[0]}.xlsx",
-                mime="application/vnd.ms-excel"
-            )
-    
+        # Show standardized data with editing capability
+        st.markdown("### 📊 Standardized Data Editor")
+        for idx, (filename, std_df) in enumerate(results):
+            with st.expander(f"📄 Edit {filename}", expanded=True):
+                edited_df = st.data_editor(
+                    std_df,
+                    num_rows="dynamic",
+                    key=f"editor_{idx}",
+                    use_container_width=True,
+                    column_config={
+                        "Sr. No.": st.column_config.NumberColumn(
+                            "Sr. No.",
+                            help="Serial Number",
+                            min_value=1,
+                            step=1,
+                        ),
+                        "Area Name / Block": st.column_config.TextColumn(
+                            "Area Name / Block",
+                            help="Area or Block Name",
+                            max_chars=100,
+                        ),
+                        "Dataset_Type": st.column_config.SelectboxColumn(
+                            "Dataset_Type",
+                            help="Type of Dataset",
+                            options=["Raw", "Processed", "Navigation", "Support", "Other"],
+                        ),
+                        "File_Format": st.column_config.SelectboxColumn(
+                            "File_Format",
+                            help="Format of Files",
+                            options=["SEG-D", "SEG-Y", "UKOOA", "XLS", "CSV", "TXT", "Other"],
+                        ),
+                    }
+                )
+                
+                # Replace the original DataFrame with edited version
+                results[idx] = (filename, edited_df)
+                
+                # Add download button for each edited file
+                buffer = BytesIO()
+                edited_df.to_excel(buffer, index=False, engine='openpyxl')
+                buffer.seek(0)
+                
+                st.download_button(
+                    label=f"💾 Save {filename}",
+                    data=buffer,
+                    file_name=f"standardized_{filename.split('.')[0]}.xlsx",
+                    mime="application/vnd.ms-excel",
+                    key=f"download_{idx}"
+                )
     else:
         st.info("Upload files to get started")
 
