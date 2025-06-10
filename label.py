@@ -176,7 +176,7 @@ def create_labeled_doc(grouped_records, logo_path):
                 
                 # Add logo aligned to the left
                 try:
-                    logo_run = header_para.add_run()
+                    _run = header_para.add_run()
                     logo_run.add_picture(logo_path, width=Inches(0.5))
                 except Exception as e:
                     logo_run = header_para.add_run("ONGC")
@@ -252,7 +252,7 @@ def label_app():
         key="label_upload"
     )
     
-    logo_path = r"C:\Users\Adity\OneDrive\Desktop\ongc (1).jpg"
+    logo_path = "./public/ongc (1).jpg"
     
     if uploaded_files:
         all_grouped_records = []

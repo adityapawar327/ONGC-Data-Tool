@@ -3,7 +3,7 @@ import streamlit as st
 # Streamlit app configuration
 st.set_page_config(
     page_title="ONGC Data Toolkit",
-    page_icon="https://etvbharatimages.akamaized.net/etvbharat/prod-images/1200-900-17672404-1059-17672404-1675582362255.jpg",
+    page_icon="./public/ongc (1).jpg",
     layout="wide",
     initial_sidebar_state="expanded"
 )
