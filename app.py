@@ -42,6 +42,8 @@ with st.sidebar:
     )
 
 if menu == "📅 Upload & Map":
+    st.header("📅 PostgreSQL Database Manager")
+    st.caption("Map and upload your Excel/CSV data to PostgreSQL database")
 
     try:
         inspector = inspect(engine)
