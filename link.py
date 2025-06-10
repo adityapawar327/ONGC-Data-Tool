@@ -312,5 +312,3 @@ def standardize_datasets():
                 )
     else:
         st.info("Upload files to get started")
-
-standardize_datasets()

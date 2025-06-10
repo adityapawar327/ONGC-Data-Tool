@@ -25,23 +25,56 @@ DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
 engine = create_engine(DATABASE_URL)
 
 with st.sidebar:
-    st.markdown("## 🔧 Navigation")
+    st.markdown("""
+        <div style='text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 10px;'>
+            <span style='font-size:32px;'>🛠️</span><br>ONGC Data Toolkit
+        </div>
+        <hr style='margin: 10px 0;'>
+        <div style='font-size: 16px; color: #666; text-align: center; margin-bottom: 10px;'>A Unified Data Platform</div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 📂 Data Management")
     menu = st.radio(
-        "Choose Functionality",
+        "",
         [
             "📅 Upload & Map",
-            "📊 Compare Files",
             "🧹 Clean & Edit",
-            "🔗 Standardize Files",
+            "🔗 Standardize Files"
+        ],
+        key="data_mgmt"
+    )
+    st.markdown("### 📊 Analysis & Tools")
+    menu2 = st.radio(
+        "",
+        [
+            "📊 Compare Files",
             "📊 Summary of Data Entry",
-            "📈 Data Type Wise", 
-            "🤖 AI Assistant",
-            "🔍 Search",
+            "📈 Data Type Wise",
             "📑 Create Labels"
-        ]
+        ],
+        key="analysis_tools"
+    )
+    st.markdown("### 🤖 AI & Search")
+    menu3 = st.radio(
+        "",
+        [
+            "🤖 AI Assistant",
+            "🔍 Search"
+        ],
+        key="ai_search"
     )
 
-if menu == "📅 Upload & Map":
+# Determine which menu was selected
+if menu:
+    selected_menu = menu
+elif menu2:
+    selected_menu = menu2
+elif menu3:
+    selected_menu = menu3
+else:
+    selected_menu = None
+
+if selected_menu == "📅 Upload & Map":
     st.header("📅 PostgreSQL Database Manager")
     st.caption("Map and upload your Excel/CSV data to PostgreSQL database")
 
@@ -119,7 +152,7 @@ if menu == "📅 Upload & Map":
                 except Exception as e:
                     st.error(f"❌ Failed to insert data: {e}")
 
-elif menu == "📊 Compare Files":
+elif selected_menu == "📊 Compare Files":
     st.header("📊 Compare Multiple Excel/CSV Files")
 
     uploaded_files = st.file_uploader(
@@ -144,7 +177,7 @@ elif menu == "📊 Compare Files":
     else:
         st.info("Please upload at least two files to compare.")
 
-elif menu == "🧹 Clean & Edit":
+elif selected_menu == "🧹 Clean & Edit":
     st.header("🧹 Clean & Edit Excel/CSV Data")
     clean_file = st.file_uploader("Upload file to clean", type=["csv", "xlsx", "xls"], key="cleaner")
 
@@ -166,22 +199,22 @@ elif menu == "🧹 Clean & Edit":
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
-elif menu == "🔗 Standardize Files":
+elif selected_menu == "🔗 Standardize Files":
     link.standardize_datasets()
 
-elif menu == "📊 Summary of Data Entry":
+elif selected_menu == "📊 Summary of Data Entry":
     analyze_app()
 
-elif menu == "📈 Data Type Wise":
+elif selected_menu == "📈 Data Type Wise":
     # New functionality for Data Type Wise processing
     data_type_wise_app()
 
-elif menu == "🤖 AI Assistant":
+elif selected_menu == "🤖 AI Assistant":
     ai_chat()
     
-elif menu == "🔍 Search":
+elif selected_menu == "🔍 Search":
     fuzzy_search_ui()
 
-elif menu == "📑 Create Labels":
+elif selected_menu == "📑 Create Labels":
     # Launch the label creation functionality
     label_app()
