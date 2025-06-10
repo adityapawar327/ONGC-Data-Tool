@@ -21,7 +21,7 @@ A powerful Streamlit-based application for managing, cleaning, standardizing, an
 
 1.  **Clone the repository:**
     ```sh
-    git clone <your-repo-url>
+    git clone https://github.com/adityapawar327/ONGC-Data-Tool.git
     cd ongc_app
     ```
 2.  **Install dependencies:**
