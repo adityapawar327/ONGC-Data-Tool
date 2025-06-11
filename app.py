@@ -8,17 +8,21 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-import pandas as pd
-from io import BytesIO
-from sqlalchemy import create_engine, inspect, text
-from compare import read_file, highlight_differences
-from cleaning import clean_data_ui
-import link  
-from analyze import analyze_app
-from ai import ai_chat
-from searching import fuzzy_search_ui
-from data_type_wise import data_type_wise_app  # Import the new module
-from label import label_app
+try:
+    import pandas as pd
+    from io import BytesIO
+    from sqlalchemy import create_engine, inspect, text
+    from compare import read_file, highlight_differences
+    from cleaning import clean_data_ui
+    import link  
+    from analyze import analyze_app
+    from ai import ai_chat
+    from searching import fuzzy_search_ui
+    from data_type_wise import data_type_wise_app  # Import the new module
+    from label import label_app
+except Exception as e:
+    st.error(f"Failed to import required modules: {str(e)}")
+    st.stop()
 
 # PostgreSQL connection string
 DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
@@ -26,53 +30,248 @@ engine = create_engine(DATABASE_URL)
 
 with st.sidebar:
     st.markdown("""
-        <div style='text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 10px;'>
+        <div style='text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 20px;'>
             <span style='font-size:32px;'>🛠️</span><br>ONGC Data Toolkit
         </div>
-        <hr style='margin: 10px 0;'>
-        <div style='font-size: 16px; color: #666; text-align: center; margin-bottom: 10px;'>A Unified Data Platform</div>
     """, unsafe_allow_html=True)
     
-    st.markdown("### 📂 Data Management")
-    menu = st.radio(
-        "",
-        [
-            "📅 Upload & Map",
-            "🧹 Clean & Edit",
-            "🔗 Standardize Files"
-        ],
-        key="data_mgmt"
+    # Main category selection
+    category = st.selectbox(
+        "Select Category",
+        ["Data Management", "Analysis Tools", "AI & Search"],
+        format_func=lambda x: {
+            "Data Management": "📂 Data Management",
+            "Analysis Tools": "📊 Analysis Tools",
+            "AI & Search": "🤖 AI & Search"
+        }[x],
+        key="category"
     )
-    st.markdown("### 📊 Analysis & Tools")
-    menu2 = st.radio(
-        "",
-        [
-            "📊 Compare Files",
-            "📊 Summary of Data Entry",
-            "📈 Data Type Wise",
-            "📑 Create Labels"
-        ],
-        key="analysis_tools"
-    )
-    st.markdown("### 🤖 AI & Search")
-    menu3 = st.radio(
-        "",
-        [
-            "🤖 AI Assistant",
-            "🔍 Search"
-        ],
-        key="ai_search"
-    )
+    
+    # Category descriptions
+    category_descriptions = {
+        "Data Management": "Tools for importing, cleaning, and standardizing your data files.",
+        "Analysis Tools": "Analyze, compare, and generate insights from your data.",
+        "AI & Search": "AI-powered tools for data analysis and advanced search capabilities."
+    }
+    
+    # Show category description
+    st.markdown(f"**Description:**\n{category_descriptions[category]}")
+    st.markdown("---")
 
-# Determine which menu was selected
-if menu:
-    selected_menu = menu
-elif menu2:
-    selected_menu = menu2
-elif menu3:
-    selected_menu = menu3
-else:
-    selected_menu = None
+    # Tool descriptions dictionary with detailed information
+    tool_descriptions = {
+        "📅 Upload & Map": """Database Import and Mapping Tool
+
+How to use:
+1. Connect to PostgreSQL database
+2. Choose target table
+3. Upload Excel/CSV file
+4. Map columns automatically or manually
+5. Preview mapped data
+6. Import to database
+
+Features:
+- Smart column mapping
+- Data validation
+- Duplicate detection
+- Error checking""",
+
+        "🧹 Clean & Edit": """Data Cleaning Tool
+
+How to use:
+1. Upload Excel/CSV file
+2. Choose cleaning options:
+   - Remove duplicates
+   - Fix missing values
+   - Format data
+   - Clean text
+3. Preview changes
+4. Download cleaned file
+
+Features:
+- Batch cleaning
+- Format fixing
+- Text normalization
+- Column management""",
+
+        "🔗 Standardize Files": """File Standardization Tool
+
+How to use:
+1. Upload files
+2. Choose standard format
+3. Select options:
+   - Column names
+   - Data formats
+   - Value rules
+4. Download standardized files
+
+Features:
+- Schema matching
+- Format detection
+- Batch processing""",
+
+        "📊 Compare Files": """File Comparison Tool
+
+How to use:
+1. Upload 2+ files
+2. Choose comparison type:
+   - Cell-by-cell
+   - Column-wise
+   - Structure only
+3. View differences
+
+Features:
+- Visual highlighting
+- Format checking
+- Difference export""",
+
+        "📊 Summary of Data Entry": """Data Analysis Tool
+
+How to use:
+1. Upload dataset
+2. Select parameters:
+   - Time period
+   - Categories
+   - Metrics
+3. View summary
+
+Features:
+- Pattern detection
+- Quality checks
+- Trend analysis""",
+
+        "📈 Data Type Wise": """Data Classification Tool
+
+How to use:
+1. Upload dataset
+2. Choose criteria:
+   - Data types
+   - Categories
+   - Time ranges
+3. View analysis
+
+Features:
+- Auto-detection
+- Pattern matching
+- Distribution views""",        "📑 Create Labels": """Physical Media Label Generator
+
+How to use:
+1. Prepare input file with required columns:
+   - Media ID and Area/Block
+   - Data Type and Format
+   - Year and Shot Points
+
+2. Configure label settings:
+   - Choose ONGC standard/custom layout
+   - Set barcode preferences
+   - Adjust font sizes and fields
+
+3. Generate and print:
+   - Preview generated labels
+   - Download as document
+   - Print on label sheets
+
+Label Contents:
+- ONGC Logo and branding
+- Media ID in large text
+- Area and data type details
+- File format and date
+- Shot point ranges
+- Optional barcode
+
+Features:
+- Multiple label templates
+- Barcode generation
+- Batch processing
+- Print-ready output""",
+
+        "🤖 AI Assistant": """AI-Powered Analysis Assistant
+
+How to use:
+1. Upload your data
+2. Ask questions about:
+   - Data patterns
+   - Anomalies
+   - Trends
+   - Relationships
+3. Get AI insights
+4. Export findings
+
+Features:
+- Natural language queries
+- Pattern recognition
+- Smart recommendations
+- Data visualization""",
+
+        "🔍 Search": """Advanced Data Search Tool
+
+How to use:
+1. Upload data files
+2. Configure search:
+   - Choose search fields
+   - Set match criteria
+   - Define filters
+3. Enter search terms
+4. Review results
+
+Features:
+- Fuzzy matching
+- Multi-file search
+- Advanced filters
+- Export results"",
+    }
+
+Steps to create labels:
+1. Prepare your Excel/CSV file with columns:
+   - HDD/Media ID
+   - Area Name/Block
+   - Type of Data/Reports
+   - File Format
+   - Period/Year
+   - Shot Point Range (FSP-LSP)
+
+2. Upload your file(s) in the label generator
+3. Preview the generated labels
+4. Download as Word document
+5. Print on label sheets
+
+The labels will include:
+• ONGC Logo
+• Media ID in large text
+• Area and data type details
+• File format and date
+• Shot point ranges
+• Barcode (if enabled)""",
+        "🤖 AI Assistant": "Get AI-powered insights and recommendations.",
+        "🔍 Search": "Advanced search across your data files."
+    }
+    
+    # Sub-options based on selected category with descriptions
+    if category == "Data Management":
+        selected_menu = st.radio(
+            "Data Management Options",
+            ["📅 Upload & Map", "🧹 Clean & Edit", "🔗 Standardize Files"],
+            key="data_mgmt_options",
+            label_visibility="collapsed"
+        )
+    elif category == "Analysis Tools":
+        selected_menu = st.radio(
+            "Analysis Options",
+            ["📊 Compare Files", "📊 Summary of Data Entry", "📈 Data Type Wise", "📑 Create Labels"],
+            key="analysis_options",
+            label_visibility="collapsed"
+        )
+    else:  # AI & Search
+        selected_menu = st.radio(
+            "AI & Search Options",
+            ["🤖 AI Assistant", "🔍 Search"],
+            key="ai_search_options",
+            label_visibility="collapsed"
+        )
+    
+    # Show tool description
+    st.markdown("**Tool Info:**")
+    st.info(tool_descriptions[selected_menu])
 
 if selected_menu == "📅 Upload & Map":
     st.header("📅 PostgreSQL Database Manager")
