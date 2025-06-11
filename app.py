@@ -29,9 +29,14 @@ DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
 engine = create_engine(DATABASE_URL)
 
 with st.sidebar:
+    # Add ONGC logo and title to sidebar
+    _, center_col, _ = st.columns(3)
+    with center_col:
+        st.image("c:/Users/Adity/OneDrive/Desktop/ongc_app/public/ongc (1).jpg", width=100)
+    
     st.markdown("""
-        <div style='text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 20px;'>
-            <span style='font-size:32px;'>🛠️</span><br>ONGC Data Toolkit
+        <div style='text-align: center; margin-bottom: 20px;'>
+            <span style='font-weight: bold; font-size: 24px;'>ONGC Data Toolkit</span>
         </div>
     """, unsafe_allow_html=True)
     
