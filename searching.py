@@ -39,7 +39,7 @@ class FuzzySearcher:
 
     def get_match_level(self, similarity, text):
         # Special terms we're looking for
-        data_types = ["SEGY", "DATA", "RAW DATA", "WATER BOTTOM", "CUBE"]
+        data_types = ["SEGY", "DATA", "RAW DATA"]
         
         # Convert both to uppercase for comparison
         text_upper = text.upper()

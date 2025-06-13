@@ -27,3 +27,5 @@ faiss-cpu
 # Additional utilities that might be needed
 fuzzywuzzy[speedup]
 python-docx  # For Word document generation
+docx2pdf
+python-Levenshtein
