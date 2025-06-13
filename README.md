@@ -1,153 +1,166 @@
-# ONGC Data Toolkit
+# 🚀 ONGC Data Toolkit
 
-A powerful Streamlit-based application for managing, cleaning, standardizing, and analyzing geoscientific and survey datasets, tailored for ONGC workflows. The toolkit provides an intuitive interface with categorized tools and detailed guidance for each operation.
+An enterprise-grade data management and analysis platform built with Python and Streamlit, specifically designed for processing geoscientific and survey datasets. This toolkit leverages advanced AI/ML capabilities, robust data processing pipelines, and modern software architecture patterns to deliver a comprehensive solution for data management challenges.
 
-## 🎯 Key Features by Category
+## 🌟 Core Technologies
 
-### 📂 Data Management
+- **Frontend**: Streamlit, Custom CSS
+- **Backend**: Python 3.8+, SQLAlchemy
+- **Database**: PostgreSQL
+- **AI/ML Stack**: 
+  - RAG (Retrieval Augmented Generation) Architecture
+  - LangChain for LLM Orchestration
+  - DeepSeek-Coder-1.3B (8B parameters) for Intelligence
+  - FAISS Vector Store for Semantic Search
+  - Ollama for Local LLM Deployment
+- **Data Processing**: Pandas, NumPy
+- **Search Engine**: Custom Fuzzy Search with Levenshtein Distance
+- **Document Processing**: Python-DOCX, PDF Generation
 
-* **Upload & Map:** Import Excel/CSV files to PostgreSQL with smart column mapping and duplicate detection
-* **Clean & Edit:** Comprehensive data cleaning tools with batch operations and format standardization
-* **Standardize Files:** Intelligent schema matching and format standardization across multiple files
+## 🎯 Key Features
 
-### 📊 Analysis Tools
+### 📊 Enterprise Data Management
 
-* **Compare Files:** Visual file comparison with cell-by-cell and column-wise analysis
-* **Summary of Data Entry:** Advanced data analysis with pattern detection and quality checks
-* **Data Type Wise:** Smart classification and processing by data types using pattern matching
-* **Create Labels:** Generate professional physical media labels with ONGC branding and barcodes
+* **Intelligent Data Import**
+  * PostgreSQL Integration with Transaction Support
+  * Smart Schema Detection and Mapping
+  * Automated Data Type Inference
+  * Duplicate Detection and Resolution
 
-### 🤖 AI & Search
+* **Advanced Data Cleaning Pipeline**
+  * Automated Data Quality Assessment
+  * Multi-stage Cleaning Operations
+  * Custom Validation Rules Engine
+  * Batch Processing Support
 
-* **Enterprise-Grade RAG System:** 
-  * State-of-the-art DeepSeek-Coder-1.3B LLM (8B parameters) running securely via Ollama
-  * Zero-trust architecture with 100% local execution - no data leaves your system
-  * Meta's FAISS vector database for high-performance semantic search (>1M QPS)
-  * Domain-adapted for geoscientific and petroleum engineering contexts
-  * Real-time context-aware responses with sub-second latency
-  * Optimized prompt engineering for technical data analysis
-  * Built-in hallucination detection and fact checking
-* **AI-Powered Data Assistant:** 
-  * Natural language understanding for complex data queries
-  * Context-aware responses with dynamic knowledge integration
-  * Advanced code generation for automated data processing
-  * Multi-turn dialogue support with memory retention
-  * Custom data visualization suggestions
-* **Enterprise Search:** 
-  * Advanced fuzzy matching with Levenshtein distance
-  * Semantic search powered by FAISS embeddings
-  * Multi-language support with cross-lingual capabilities
-  * Configurable relevance scoring and ranking
+* **Format Standardization**
+  * Cross-format Schema Matching
+  * Intelligent Data Normalization
+  * Custom Template Support
+  * Automated Data Transformation
 
-## 💫 Enhanced Features
+### 🔍 Analysis & Intelligence
 
-* **Smart Column Mapping:** Automatic detection and mapping of similar columns
-* **Batch Processing:** Handle multiple files efficiently
-* **Visual Highlighting:** Clear visualization of data differences and patterns
-* **Format Standardization:** Consistent data formatting across all files
-* **Error Detection:** Built-in validation and error checking
-* **Custom Templates:** Flexible templates for labels and reports
-* **Interactive UI:** Categorized sidebar with detailed tool descriptions
+* **Enterprise Search**
+  * Vector-based Semantic Search
+  * Fuzzy Matching Algorithm
+  * Multi-field Search Support
+  * Configurable Relevance Scoring
 
-## 🛠️ Installation
+* **Data Analysis Tools**
+  * Real-time Data Visualization
+  * Pattern Detection Engine
+  * Statistical Analysis
+  * Anomaly Detection
 
-1.  **Clone the repository:**
-    ```sh
-    git clone https://github.com/adityapawar327/ONGC-Data-Tool.git
-    cd ongc_app
-    ```
+* **AI-Powered Features**
+  * Context-Aware RAG System
+  * Natural Language Query Processing
+  * Automated Data Quality Reports
+  * Intelligent Data Classification
 
-2.  **Install dependencies:**
-    ```sh
-    pip install -r requirements.txt
-    ```
+### 🛠️ Technical Architecture
 
-3.  **Set up PostgreSQL:**
-    * Ensure PostgreSQL is installed and running
-    * Update the `DATABASE_URL` in `app.py` with your credentials
+* **Modular Design**
+  * Component-based Architecture
+  * Clean Code Principles
+  * Extensive Error Handling
+  * Comprehensive Logging
 
-4.  **Run the app:**
-    ```sh
-    streamlit run app.py
-    ```
+* **Security**
+  * Local LLM Deployment
+  * Zero Data Leakage
+  * Secure Database Operations
+  * Input Validation
 
-## 📂 Project Structure
+* **Performance**
+  * Optimized Data Processing
+  * Efficient Memory Management
+  * Batch Operation Support
+  * Caching Mechanisms
 
-* `app.py` - Main application with UI components and navigation
-* `compare.py` - File comparison logic and visualization
-* `cleaning.py` - Data cleaning and standardization utilities
-* `link.py` - File linking and standardization functions
-* `analyze.py` - Data analysis and summary generation
-* `data_type_wise.py` - Data type classification and processing
-* `ai.py` - Enterprise RAG (Retrieval Augmented Generation) system integrating DeepSeek LLM, FAISS vector store, and advanced NLP with custom prompt engineering
-* `searching.py` - Advanced search with fuzzy matching
-* `label.py` - Label generation and customization
-* `requirements.txt` - Project dependencies
+## 🔧 Installation
 
-## 🎯 Usage Guide
+```bash
+# Clone the repository
+git clone https://github.com/adityapawar327/ONGC-Data-Tool.git
+cd ongc_app
 
-1.  **Navigation:**
+# Create and activate virtual environment (Windows)
+python -m venv venv
+.\\venv\\Scripts\\activate
 
-    * Use the categorized sidebar to select your desired tool
-    * Read the detailed description for each tool before use
+# Install dependencies
+pip install -r requirements.txt
 
-2.  **Data Management:**
+# Configure PostgreSQL
+# Update DATABASE_URL in app.py with your credentials
 
-    * Upload files in Excel/CSV format
-    * Follow step-by-step instructions for each operation
-    * Preview changes before applying them
+# Run the application
+streamlit run app.py
+```
 
-3.  **Analysis:**
+## 📦 Project Structure
 
-    * Compare files with visual difference highlighting
-    * Generate summaries and insights
-    * Create customized labels with barcodes
+```
+ongc_app/
+├── app.py              # Main application entry point
+├── ai.py              # RAG system and LLM integration
+├── analyze.py         # Data analysis engine
+├── cleaning.py        # Data cleaning pipeline
+├── compare.py         # File comparison logic
+├── convert.py         # Format conversion utilities
+├── data_type_wise.py  # Data classification system
+├── label.py           # Document generation
+├── link.py           # Data linking engine
+├── searching.py      # Search implementation
+└── requirements.txt  # Project dependencies
+```
 
-4.  **AI & Search:**
+## 💡 Key Components
 
-    * Ask questions about your data in natural language
-    * Use fuzzy search to find information quickly
+### AI Engine (`ai.py`)
+- Implements enterprise-grade RAG architecture
+- Integrates DeepSeek-Coder-1.3B LLM
+- Custom prompt engineering for domain-specific tasks
+- FAISS vector store for efficient similarity search
 
-## 📋 Technical Requirements
+### Data Processing (`cleaning.py`, `analyze.py`)
+- Advanced data cleaning pipelines
+- Statistical analysis tools
+- Pattern detection algorithms
+- Data quality assessment
 
-### System Requirements
-* Python 3.8+ with pip
-* PostgreSQL database
-* Ollama for local LLM deployment
-* 16GB+ RAM recommended
-* 50GB+ storage space for models and indices
+### Search Engine (`searching.py`)
+- Custom fuzzy search implementation
+- Levenshtein distance calculations
+- Multi-field search capability
+- Relevance scoring system
 
-### Core Dependencies
-* **AI Components:**
-  * `langchain` and related packages - For LLM integration and RAG pipeline
-  * `faiss-cpu` - For vector similarity search
-  * `langchain-ollama` - For local LLM deployment
-  
-* **Data Processing:**
-  * `pandas` - Data manipulation and analysis
-  * `numpy` - Numerical computing
-  
-* **Web Framework:**
-  * `streamlit` - Modern web interface
-  * `psycopg2` - PostgreSQL adapter
-  
-Full list of dependencies available in `requirements.txt`
+## 🔒 Security & Performance
 
-## 📜 License
+- **Zero-Trust Architecture**
+  * All AI operations run locally
+  * No data leaves your system
+  * Secure database operations
 
-This project is intended for internal ONGC use. For licensing or external use, please contact the project maintainer.
+- **Performance Optimizations**
+  * Efficient memory management
+  * Batch processing capabilities
+  * Caching mechanisms
+  * Parallel processing support
 
 ## 🤝 Contributing
 
-### Commit Convention
+We follow a standardized commit convention. See [COMMIT_CONVENTION.md](COMMIT_CONVENTION.md) for guidelines.
 
-We follow a standardized commit message format to maintain a clear and meaningful git history. Please read our [Commit Convention Guide](COMMIT_CONVENTION.md) before contributing.
+## 📫 Contact
 
-Example commit messages:
-```
-feat: add user authentication system
-fix: resolve data loading issue in dashboard
-docs: update installation instructions
-```
+For questions or feedback, please contact the project maintainer.
 
-See `COMMIT_CONVENTION.md` for detailed guidelines and examples.
+## 📄 License
+
+This project is intended for internal ONGC use. For licensing or external use, please contact the project maintainer.
+
+---
+**Keywords**: Python, Data Engineering, Machine Learning, RAG, LangChain, FAISS, Vector Search, ETL, Data Processing, Enterprise Software, Data Analysis, Natural Language Processing, PostgreSQL, Streamlit, Software Architecture, Data Pipeline, Data Quality, Business Intelligence
