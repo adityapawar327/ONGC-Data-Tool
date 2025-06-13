@@ -24,8 +24,9 @@ langchain-ollama
 # Vector store and embeddings
 faiss-cpu
 
-# Additional utilities that might be needed
+# Document processing and conversion
 fuzzywuzzy[speedup]
-python-docx  # For Word document generation
+python-docx
 docx2pdf
 python-Levenshtein
+pywin32  # For Word automation

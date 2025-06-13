@@ -3,6 +3,7 @@ import pandas as pd
 from io import BytesIO
 import docx2pdf
 import os
+import pythoncom
 from pathlib import Path
 
 def convert_csv_to_excel(csv_file):
@@ -39,35 +40,62 @@ def convert_excel_to_csv(excel_file):
 def convert_docx_to_pdf(docx_file):
     """Convert DOCX file to PDF format."""
     try:
-        # Create a temporary directory if it doesn't exist
-        temp_dir = Path("temp")
-        temp_dir.mkdir(exist_ok=True)
+        import tempfile
+        import shutil
+        import pythoncom  # Import for COM initialization
         
-        # Save the uploaded file temporarily
-        temp_docx = temp_dir / "temp.docx"
-        temp_pdf = temp_dir / "temp.pdf"
+        # Initialize COM in this thread
+        pythoncom.CoInitialize()
         
-        with open(temp_docx, "wb") as f:
-            f.write(docx_file.getvalue())
-        
-        # Convert DOCX to PDF
-        docx2pdf.convert(str(temp_docx), str(temp_pdf))
-        
-        # Read the PDF file
-        with open(temp_pdf, "rb") as f:
-            pdf_data = f.read()
-        
-        # Clean up temporary files
-        temp_docx.unlink()
-        temp_pdf.unlink()
-        
-        # Create BytesIO object with PDF data
-        output = BytesIO(pdf_data)
-        output.seek(0)
-        
-        return output, None
+        # Create a temporary directory using tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create temporary file paths
+            temp_docx = Path(temp_dir) / f"{docx_file.name}"
+            temp_pdf = Path(temp_dir) / f"{Path(docx_file.name).stem}.pdf"
+            
+            # Save the uploaded file temporarily
+            with open(temp_docx, "wb") as f:
+                f.write(docx_file.getvalue())
+            
+            try:
+                # First attempt: Try using docx2pdf
+                docx2pdf.convert(str(temp_docx), str(temp_pdf))
+                
+                # Read the PDF file
+                with open(temp_pdf, "rb") as f:
+                    pdf_data = f.read()
+                    
+            except Exception as word_error:
+                # If docx2pdf fails, try using alternative method with win32com
+                try:
+                    import win32com.client
+                    word = win32com.client.Dispatch('Word.Application')
+                    doc = word.Documents.Open(str(temp_docx))
+                    doc.SaveAs(str(temp_pdf), FileFormat=17)  # 17 represents PDF                    doc.Close()
+                    word.Quit()
+                    
+                    # Read the PDF file
+                    with open(temp_pdf, "rb") as f:
+                        pdf_data = f.read()
+                        
+                except Exception as com_error:
+                    # If both methods fail, inform the user
+                    return None, f"Conversion failed: Both conversion methods failed.\nMethod 1: {str(word_error)}\nMethod 2: {str(com_error)}"
+                finally:
+                    # Cleanup COM
+                    try:
+                        pythoncom.CoUninitialize()
+                    except:
+                        pass
+            
+            # Create BytesIO object with PDF data
+            output = BytesIO(pdf_data)
+            output.seek(0)
+            
+            return output, None
+            
     except Exception as e:
-        return None, str(e)
+        return None, f"Conversion failed: {str(e)}"
 
 def convert_app():
     """Main conversion application interface."""
