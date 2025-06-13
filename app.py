@@ -8,6 +8,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS for category selection
+category_style = """
+<style>
+[data-testid="stSelectbox"] > div:first-of-type {
+    cursor: pointer !important;
+}
+[data-testid="stSelectbox"] div[role="button"] {
+    cursor: pointer !important;
+}
+[data-testid="stSelectbox"] div[role="option"] {
+    cursor: pointer !important;
+}
+</style>
+"""
+st.markdown(category_style, unsafe_allow_html=True)
+
 # Hide footer and deploy button while keeping the menu
 hide_streamlit_style = """
 <style>
@@ -16,18 +32,19 @@ div[data-testid="stToolbar"] {visibility: hidden;}
 .st-emotion-cache-h5rgaw.ea3mdgi1 {visibility: hidden;}
 
 /* Fix cursor for dropdown menus */
-div[data-baseweb="select"] {
-    cursor: pointer !important;
-}
-div[data-baseweb="select"] input {
-    cursor: pointer !important;
-}
-.stSelectbox {
-    cursor: pointer !important;
-}
-.stSelectbox > div {
-    cursor: pointer !important;
-}
+div[role="listbox"] {cursor: pointer !important;}
+div[role="combobox"] {cursor: pointer !important;}
+div[data-baseweb="select"] {cursor: pointer !important;}
+div[data-baseweb="select"] * {cursor: pointer !important;}
+.stSelectbox, .stSelectbox *, div[class*="Select"] {cursor: pointer !important;}
+div[class*="Select__control"] {cursor: pointer !important;}
+div[class*="Select__input"] {cursor: pointer !important;}
+div[class*="Select__option"] {cursor: pointer !important;}
+div[class*="Select__value-container"] {cursor: pointer !important;}
+div[class*="Select__indicators"] {cursor: pointer !important;}
+
+/* Ensure text input stays as text cursor */
+.stSelectbox input {cursor: text !important;}
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
