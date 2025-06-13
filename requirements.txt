@@ -10,6 +10,7 @@ psycopg2-binary
 # Excel/File handling
 openpyxl
 xlrd
+xlsxwriter
 
 # String matching and fuzzy search
 fuzzywuzzy[speedup]

@@ -173,10 +173,9 @@ def create_labeled_doc(grouped_records, logo_path):
                 # Create header section with logo and title
                 header_para = cell.add_paragraph()
                 header_para.space_after = Pt(6)
-                
-                # Add logo aligned to the left
+                  # Add logo aligned to the left
                 try:
-                    _run = header_para.add_run()
+                    logo_run = header_para.add_run()
                     logo_run.add_picture(logo_path, width=Inches(0.5))
                 except Exception as e:
                     logo_run = header_para.add_run("ONGC")
