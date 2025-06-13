@@ -20,6 +20,7 @@ try:
     from searching import fuzzy_search_ui
     from data_type_wise import data_type_wise_app  # Import the new module
     from label import label_app
+    from convert import convert_app  # Import the new conversion module
 except Exception as e:
     st.error(f"Failed to import required modules: {str(e)}")
     st.stop()
@@ -158,7 +159,9 @@ How to use:
 Features:
 - Auto-detection
 - Pattern matching
-- Distribution views""",        "📑 Create Labels": """Physical Media Label Generator
+- Distribution views""",
+
+        "📑 Create Labels": """Physical Media Label Generator
 
 How to use:
 1. Prepare input file with required columns:
@@ -223,39 +226,31 @@ Features:
 - Fuzzy matching
 - Multi-file search
 - Advanced filters
-- Export results"",
+- Export results""",
+
+        "🔄 Convert Files": """File Format Conversion Tool
+
+How to use:
+1. Choose conversion type:
+   - CSV to Excel
+   - Excel to CSV
+   - DOCX to PDF
+2. Upload source file
+3. Click convert
+4. Download converted file
+
+Features:
+- Multiple format support
+- Batch conversion
+- Preserves formatting
+- Easy download"""
     }
 
-Steps to create labels:
-1. Prepare your Excel/CSV file with columns:
-   - HDD/Media ID
-   - Area Name/Block
-   - Type of Data/Reports
-   - File Format
-   - Period/Year
-   - Shot Point Range (FSP-LSP)
-
-2. Upload your file(s) in the label generator
-3. Preview the generated labels
-4. Download as Word document
-5. Print on label sheets
-
-The labels will include:
-• ONGC Logo
-• Media ID in large text
-• Area and data type details
-• File format and date
-• Shot point ranges
-• Barcode (if enabled)""",
-        "🤖 AI Assistant": "Get AI-powered insights and recommendations.",
-        "🔍 Search": "Advanced search across your data files."
-    }
-    
     # Sub-options based on selected category with descriptions
     if category == "Data Management":
         selected_menu = st.radio(
             "Data Management Options",
-            ["📅 Upload & Map", "🧹 Clean & Edit", "🔗 Standardize Files"],
+            ["📅 Upload & Map", "🧹 Clean & Edit", "🔗 Standardize Files", "🔄 Convert Files"],
             key="data_mgmt_options",
             label_visibility="collapsed"
         )
@@ -422,3 +417,6 @@ elif selected_menu == "🔍 Search":
 elif selected_menu == "📑 Create Labels":
     # Launch the label creation functionality
     label_app()
+
+elif selected_menu == "🔄 Convert Files":
+    convert_app()
