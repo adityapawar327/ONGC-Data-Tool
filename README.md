@@ -103,4 +103,15 @@ This project is intended for internal ONGC use. For licensing or external use, p
 
 ## 🤝 Contributing
 
-For bug reports, feature requests, or contributions, please contact the development team.
+### Commit Convention
+
+We follow a standardized commit message format to maintain a clear and meaningful git history. Please read our [Commit Convention Guide](COMMIT_CONVENTION.md) before contributing.
+
+Example commit messages:
+```
+feat: add user authentication system
+fix: resolve data loading issue in dashboard
+docs: update installation instructions
+```
+
+See `COMMIT_CONVENTION.md` for detailed guidelines and examples.

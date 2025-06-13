@@ -1,0 +1,24 @@
+# <type>: <short summary>
+#  │            │
+#  │            └─⫸ Summary in present tense. Not capitalized. No period at the end.
+#  │
+#  └─⫸ Commit Type: feat|fix|docs|style|refactor|perf|test|chore|revert
+#
+# Types:
+#  feat     ✨ A new feature
+#  fix      🐛 A bug fix
+#  docs     📚 Documentation only changes
+#  style    💎 Changes that do not affect the meaning of the code
+#  refactor 📦 A code change that neither fixes a bug nor adds a feature
+#  perf     🚀 A code change that improves performance
+#  test     🧪 Adding missing tests or correcting existing tests
+#  chore    🔧 Changes to the build process or auxiliary tools
+#  revert   ⏪️ Reverts a previous commit
+#
+# Optional body: Explain WHY this change was made
+# <BLANK LINE>
+# <body>
+#
+# Optional footer: Include closing keywords for issues
+# <BLANK LINE>
+# <footer>
