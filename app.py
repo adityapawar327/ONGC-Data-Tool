@@ -14,6 +14,20 @@ hide_streamlit_style = """
 footer {visibility: hidden;}
 div[data-testid="stToolbar"] {visibility: hidden;}
 .st-emotion-cache-h5rgaw.ea3mdgi1 {visibility: hidden;}
+
+/* Fix cursor for dropdown menus */
+div[data-baseweb="select"] {
+    cursor: pointer !important;
+}
+div[data-baseweb="select"] input {
+    cursor: pointer !important;
+}
+.stSelectbox {
+    cursor: pointer !important;
+}
+.stSelectbox > div {
+    cursor: pointer !important;
+}
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
