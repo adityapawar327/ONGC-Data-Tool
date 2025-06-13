@@ -8,6 +8,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Hide footer and deploy button while keeping the menu
+hide_streamlit_style = """
+<style>
+footer {visibility: hidden;}
+div[data-testid="stToolbar"] {visibility: hidden;}
+.st-emotion-cache-h5rgaw.ea3mdgi1 {visibility: hidden;}
+</style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 try:
     import pandas as pd
     from io import BytesIO
