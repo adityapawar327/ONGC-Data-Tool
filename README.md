@@ -112,30 +112,26 @@ A powerful Streamlit-based application for managing, cleaning, standardizing, an
 
 ### System Requirements
 * Python 3.8+ with pip
-* PostgreSQL 13+ database
+* PostgreSQL database
 * Ollama for local LLM deployment
-* CUDA-compatible GPU (8GB+ VRAM recommended) for optimal AI performance
-* 16GB+ System RAM recommended
-* 50GB+ storage space for models and vector indices
+* 16GB+ RAM recommended
+* 50GB+ storage space for models and indices
 
 ### Core Dependencies
-* **AI/ML Stack:**
-  * `torch` - PyTorch deep learning framework
-  * `transformers` - Hugging Face Transformers for LLM integration
-  * `faiss-gpu`/`faiss-cpu` - Facebook AI Similarity Search for vector operations
-  * `sentence-transformers` - For generating text embeddings
-  * `langchain` - For RAG pipeline orchestration
+* **AI Components:**
+  * `langchain` and related packages - For LLM integration and RAG pipeline
+  * `faiss-cpu` - For vector similarity search
+  * `langchain-ollama` - For local LLM deployment
   
 * **Data Processing:**
   * `pandas` - Data manipulation and analysis
   * `numpy` - Numerical computing
-  * `scikit-learn` - Machine learning utilities
   
 * **Web Framework:**
   * `streamlit` - Modern web interface
   * `psycopg2` - PostgreSQL adapter
   
-* Additional dependencies are listed in `requirements.txt`
+Full list of dependencies available in `requirements.txt`
 
 ## 📜 License
 
