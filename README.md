@@ -79,26 +79,121 @@ An enterprise-grade data management and analysis platform built with Python and 
   * Batch Operation Support
   * Caching Mechanisms
 
-## 🔧 Installation
+## 🔧 Installation Guide
 
-```bash
-# Clone the repository
-git clone https://github.com/adityapawar327/ONGC-Data-Tool.git
-cd ongc_app
+### Prerequisites
 
-# Create and activate virtual environment (Windows)
-python -m venv venv
-.\\venv\\Scripts\\activate
+1. **Python Setup**
+   ```bash
+   # Install Python 3.8 or later from https://www.python.org/downloads/
+   # Verify installation
+   python --version
+   ```
 
-# Install dependencies
-pip install -r requirements.txt
+2. **PostgreSQL Installation**
+   - Download and install PostgreSQL 13+ from https://www.postgresql.org/download/
+   - During installation, note down your password
+   - Create a new database:
+     ```sql
+     CREATE DATABASE ongcdata;
+     ```
 
-# Configure PostgreSQL
-# Update DATABASE_URL in app.py with your credentials
+3. **Ollama Setup for DeepSeek**
+   ```bash
+   # Install Ollama from https://ollama.ai/download
+   
+   # Pull the latest DeepSeek Coder model (8B parameters)
+   ollama pull deepseek-coder
 
-# Run the application
-streamlit run app.py
-```
+   # Verify installation
+   ollama list
+   ```
+
+### Project Setup
+
+1. **Clone & Navigate**
+   ```bash
+   git clone https://github.com/adityapawar327/ONGC-Data-Tool.git
+   cd ongc_app
+   ```
+
+2. **Virtual Environment**
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+
+   # Activate (Windows)
+   .\venv\Scripts\activate
+
+   # Activate (Linux/Mac)
+   source venv/bin/activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   # Update pip
+   python -m pip install --upgrade pip
+
+   # Install required packages
+   pip install -r requirements.txt
+   ```
+
+4. **Configure Database**
+   - Open `app.py`
+   - Update the DATABASE_URL:
+     ```python
+     DATABASE_URL = "postgresql://username:password@localhost:5432/ongcdata"
+     ```
+   - Replace username, password with your PostgreSQL credentials
+
+5. **Environment Setup**
+   ```bash
+   # Create .env file
+   echo DATABASE_URL=postgresql://username:password@localhost:5432/ongcdata > .env
+   echo OLLAMA_BASE_URL=http://localhost:11434 >> .env
+   ```
+
+6. **Run Application**
+   ```bash
+   # Start Ollama in background
+   ollama serve
+
+   # In a new terminal, run the application
+   streamlit run app.py
+   ```
+
+### Verification Steps
+
+1. **Check Database Connection**
+   - Application will show successful database connection on startup
+   - Test data upload functionality
+
+2. **Verify AI Features**
+   - Go to "AI Assistant" section
+   - Type a test query
+   - System should respond using local DeepSeek model
+
+3. **Test Data Processing**
+   - Upload a sample Excel/CSV file
+   - Verify data cleaning features
+   - Test search functionality
+
+### Troubleshooting
+
+1. **Database Issues**
+   - Verify PostgreSQL service is running
+   - Check database credentials
+   - Ensure database exists
+
+2. **AI Model Issues**
+   - Verify Ollama is running: `curl http://localhost:11434/api/tags`
+   - Check DeepSeek model: `ollama list`
+   - Try restarting Ollama service
+
+3. **Application Errors**
+   - Check Python version compatibility
+   - Verify all dependencies are installed
+   - Check console for error messages
 
 ## 📦 Project Structure
 
