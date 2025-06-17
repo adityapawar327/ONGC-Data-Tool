@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+"/>
     <img src="https://img.shields.io/badge/Streamlit-1.24+-FF4B4B.svg" alt="Streamlit"/>
     <img src="https://img.shields.io/badge/PostgreSQL-13+-336791.svg" alt="PostgreSQL"/>
-    <img src="https://img.shields.io/badge/DeepSeek-R1-8B-00A67E.svg" alt="DeepSeek-R1"/>
+    <img src="https://img.shields.io/badge/DeepSeek_R1-8B-2E8B57.svg" alt="DeepSeek-R1"/>
   </p>
 </div>
 
