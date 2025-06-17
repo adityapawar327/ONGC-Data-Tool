@@ -338,5 +338,5 @@ We follow a standardized commit convention. See [COMMIT_CONVENTION.md](COMMIT_CO
 ---
 
 <div align="center">
-  <p>© 2024 ONGC Data Toolkit. All rights reserved.</p>
+  <p>© 2025 ONGC Data Toolkit. All rights reserved.</p>
 </div>
