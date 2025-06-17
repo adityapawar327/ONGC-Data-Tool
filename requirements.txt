@@ -26,9 +26,9 @@ langchain-ollama
 faiss-cpu<1.7.0
 
 # Document processing and conversion
-python-docx
-docx2pdf
-pythoncom; platform_system=="Windows"  # Required for COM automation
-pywin32; platform_system=="Windows"  # For Word automation on Windows only
-pywin32-ctypes; platform_system=="Windows"  # Additional Windows COM support
+python-docx>=0.8.11
+reportlab>=4.0.4
+Pillow>=10.0.0  # Required by reportlab
+pypdf2>=3.0.0   # PDF manipulation
+docx2pdf; platform_system=="Windows"  # Optional: for Windows-specific conversion
 

@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
-import docx2pdf
 import os
-import pythoncom
 from pathlib import Path
+import tempfile
+import platform
+from docx2pdf import convert as docx2pdf_convert
+from weasyprint import HTML
+from markdown2pdf import convert as md2pdf_convert
 
 def convert_csv_to_excel(csv_file):
     """Convert CSV file to Excel format."""
@@ -38,16 +41,47 @@ def convert_excel_to_csv(excel_file):
         return None, str(e)
 
 def convert_docx_to_pdf(docx_file):
-    """Convert DOCX file to PDF format."""
+    """Convert DOCX file to PDF format using platform-independent approach."""
     try:
-        import tempfile
-        import shutil
-        import pythoncom  # Import for COM initialization
+        from docx import Document
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import letter
         
-        # Initialize COM in this thread
-        pythoncom.CoInitialize()
-        
-        # Create a temporary directory using tempfile
+        # Create temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_docx = Path(temp_dir) / f"{docx_file.name}"
+            temp_pdf = Path(temp_dir) / f"{Path(docx_file.name).stem}.pdf"
+            
+            # Save uploaded file
+            with open(temp_docx, "wb") as f:
+                f.write(docx_file.getvalue())
+            
+            # Read the DOCX content
+            doc = Document(temp_docx)
+            
+            # Create PDF
+            c = canvas.Canvas(str(temp_pdf), pagesize=letter)
+            
+            # Write content to PDF
+            y = 750  # Starting y position
+            for paragraph in doc.paragraphs:
+                if y < 50:  # Check if we need a new page
+                    c.showPage()
+                    y = 750
+                c.drawString(50, y, paragraph.text)
+                y -= 15
+            
+            c.save()
+            
+            # Read the generated PDF
+            with open(temp_pdf, "rb") as pdf_file:
+                pdf_data = pdf_file.read()
+            
+            # Create BytesIO object with PDF data
+            output = BytesIO(pdf_data)
+            output.seek(0)
+            
+            return output, None
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create temporary file paths
             temp_docx = Path(temp_dir) / f"{docx_file.name}"
