@@ -1,10 +1,10 @@
 # Core Streamlit and Data Processing
-streamlit>=1.24.0
-pandas<2.0.0
-numpy<1.24.0
+streamlit
+pandas
+numpy
 
 # Database connectivity
-sqlalchemy<2.0.0
+sqlalchemy
 psycopg2-binary
 
 # Excel/File handling
@@ -14,21 +14,19 @@ xlsxwriter
 
 # String matching and fuzzy search
 fuzzywuzzy[speedup]
-python-Levenshtein
 
 # LangChain and AI components
-langchain>=0.0.184
+langchain
 langchain-community
 langchain-core
 langchain-ollama
 
 # Vector store and embeddings
-faiss-cpu<1.7.0
+faiss-cpu
 
 # Document processing and conversion
-python-docx>=0.8.11
-reportlab>=4.0.4
-Pillow>=10.0.0  # Required by reportlab
-pypdf2>=3.0.0   # PDF manipulation
-docx2pdf; platform_system=="Windows"  # Optional: for Windows-specific conversion
-
+fuzzywuzzy[speedup]
+python-docx
+docx2pdf
+python-Levenshtein
+pywin32  # For Word automation
