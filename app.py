@@ -89,11 +89,11 @@ def setup_database_connection():
     connection_success, error_msg = test_database_connection(st.session_state.database_url)
     
     if not connection_success:
-        st.sidebar.markdown("### 🔧 Database Connection")
-        st.sidebar.warning("⚠️ Database connection failed. Please enter your PostgreSQL connection details.")
+        st.markdown("### 🔧 Database Connection")
+        st.warning("⚠️ Database connection failed. Please enter your PostgreSQL connection details.")
         
         # Database connection form
-        with st.sidebar.form("database_connection"):
+        with st.form("database_connection"):
             st.markdown("**PostgreSQL Connection Details:**")
             
             # Connection parameters
@@ -123,13 +123,13 @@ def setup_database_connection():
                 
                 if success:
                     st.session_state.database_url = test_url
-                    st.sidebar.success("✅ Database connection successful!")
+                    st.success("✅ Database connection successful!")
                     st.rerun()
                 else:
-                    st.sidebar.error(f"❌ Connection failed: {error}")
+                    st.error(f"❌ Connection failed: {error}")
         
         # Show current status
-        st.sidebar.info(f"**Current URL:** {st.session_state.database_url}")
+        st.info(f"**Current URL:** {st.session_state.database_url}")
         return None
     else:
         return create_engine(st.session_state.database_url)
@@ -391,8 +391,8 @@ if selected_menu == "📅 Upload & Map":
 
     # Check if database connection is available
     if engine is None:
-        st.error("❌ Database connection is not available. Please configure the database connection in the sidebar first.")
-        st.info("💡 Use the database connection form in the sidebar to connect to your PostgreSQL database.")
+        st.error("❌ Database connection is not available. Please configure the database connection above first.")
+        st.info("💡 Use the database connection form above to connect to your PostgreSQL database.")
         st.stop()
 
     try:
@@ -400,7 +400,7 @@ if selected_menu == "📅 Upload & Map":
         tables = inspector.get_table_names()
     except Exception as e:
         st.error(f"Database connection failed: {e}")
-        st.info("💡 Please check your database connection settings in the sidebar.")
+        st.info("💡 Please check your database connection settings above.")
         st.stop()
 
     if not tables:
