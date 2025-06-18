@@ -67,8 +67,75 @@ except Exception as e:
     st.stop()
 
 # PostgreSQL connection string
-DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
-engine = create_engine(DATABASE_URL)
+DEFAULT_DATABASE_URL = "postgresql://postgres:test@localhost:5432/ongctest4"
+
+# Initialize session state for database URL
+if 'database_url' not in st.session_state:
+    st.session_state.database_url = DEFAULT_DATABASE_URL
+
+# Function to test database connection
+def test_database_connection(url):
+    try:
+        test_engine = create_engine(url)
+        with test_engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+# Database connection setup
+def setup_database_connection():
+    # Try the current database URL
+    connection_success, error_msg = test_database_connection(st.session_state.database_url)
+    
+    if not connection_success:
+        st.sidebar.markdown("### 🔧 Database Connection")
+        st.sidebar.warning("⚠️ Database connection failed. Please enter your PostgreSQL connection details.")
+        
+        # Database connection form
+        with st.sidebar.form("database_connection"):
+            st.markdown("**PostgreSQL Connection Details:**")
+            
+            # Connection parameters
+            host = st.text_input("Host", value="localhost", help="Database host (e.g., localhost)")
+            port = st.text_input("Port", value="5432", help="Database port (default: 5432)")
+            database = st.text_input("Database Name", value="ongctest4", help="Database name")
+            username = st.text_input("Username", value="postgres", help="Database username")
+            password = st.text_input("Password", type="password", help="Database password")
+            
+            # Or direct URL input
+            st.markdown("**Or enter full connection URL:**")
+            custom_url = st.text_input(
+                "Database URL", 
+                value=st.session_state.database_url,
+                help="Format: postgresql://username:password@host:port/database"
+            )
+            
+            # Test connection button
+            if st.form_submit_button("🔗 Test Connection"):
+                # Use custom URL if provided, otherwise build from components
+                if custom_url and custom_url != st.session_state.database_url:
+                    test_url = custom_url
+                else:
+                    test_url = f"postgresql://{username}:{password}@{host}:{port}/{database}"
+                
+                success, error = test_database_connection(test_url)
+                
+                if success:
+                    st.session_state.database_url = test_url
+                    st.sidebar.success("✅ Database connection successful!")
+                    st.rerun()
+                else:
+                    st.sidebar.error(f"❌ Connection failed: {error}")
+        
+        # Show current status
+        st.sidebar.info(f"**Current URL:** {st.session_state.database_url}")
+        return None
+    else:
+        return create_engine(st.session_state.database_url)
+
+# Initialize database engine
+engine = setup_database_connection()
 
 with st.sidebar:
     # Add ONGC logo and title to sidebar
@@ -322,11 +389,18 @@ if selected_menu == "📅 Upload & Map":
     st.header("📅 PostgreSQL Database Manager")
     st.caption("Map and upload your Excel/CSV data to PostgreSQL database")
 
+    # Check if database connection is available
+    if engine is None:
+        st.error("❌ Database connection is not available. Please configure the database connection in the sidebar first.")
+        st.info("💡 Use the database connection form in the sidebar to connect to your PostgreSQL database.")
+        st.stop()
+
     try:
         inspector = inspect(engine)
         tables = inspector.get_table_names()
     except Exception as e:
         st.error(f"Database connection failed: {e}")
+        st.info("💡 Please check your database connection settings in the sidebar.")
         st.stop()
 
     if not tables:
