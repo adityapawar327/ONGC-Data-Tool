@@ -89,47 +89,49 @@ def setup_database_connection():
     connection_success, error_msg = test_database_connection(st.session_state.database_url)
     
     if not connection_success:
-        st.markdown("### 🔧 Database Connection")
-        st.warning("⚠️ Database connection failed. Please enter your PostgreSQL connection details.")
-        
-        # Database connection form
-        with st.form("database_connection"):
-            st.markdown("**PostgreSQL Connection Details:**")
+        # Only show the form if we're on the main page (no specific tool selected)
+        if 'selected_menu' not in st.session_state:
+            st.markdown("### 🔧 Database Connection")
+            st.warning("⚠️ Database connection failed. Please enter your PostgreSQL connection details.")
             
-            # Connection parameters
-            host = st.text_input("Host", value="localhost", help="Database host (e.g., localhost)")
-            port = st.text_input("Port", value="5432", help="Database port (default: 5432)")
-            database = st.text_input("Database Name", value="ongctest4", help="Database name")
-            username = st.text_input("Username", value="postgres", help="Database username")
-            password = st.text_input("Password", type="password", help="Database password")
-            
-            # Or direct URL input
-            st.markdown("**Or enter full connection URL:**")
-            custom_url = st.text_input(
-                "Database URL", 
-                value=st.session_state.database_url,
-                help="Format: postgresql://username:password@host:port/database"
-            )
-            
-            # Test connection button
-            if st.form_submit_button("🔗 Test Connection"):
-                # Use custom URL if provided, otherwise build from components
-                if custom_url and custom_url != st.session_state.database_url:
-                    test_url = custom_url
-                else:
-                    test_url = f"postgresql://{username}:{password}@{host}:{port}/{database}"
+            # Database connection form
+            with st.form("database_connection"):
+                st.markdown("**PostgreSQL Connection Details:**")
                 
-                success, error = test_database_connection(test_url)
+                # Connection parameters
+                host = st.text_input("Host", value="localhost", help="Database host (e.g., localhost)")
+                port = st.text_input("Port", value="5432", help="Database port (default: 5432)")
+                database = st.text_input("Database Name", value="ongctest4", help="Database name")
+                username = st.text_input("Username", value="postgres", help="Database username")
+                password = st.text_input("Password", type="password", help="Database password")
                 
-                if success:
-                    st.session_state.database_url = test_url
-                    st.success("✅ Database connection successful!")
-                    st.rerun()
-                else:
-                    st.error(f"❌ Connection failed: {error}")
-        
-        # Show current status
-        st.info(f"**Current URL:** {st.session_state.database_url}")
+                # Or direct URL input
+                st.markdown("**Or enter full connection URL:**")
+                custom_url = st.text_input(
+                    "Database URL", 
+                    value=st.session_state.database_url,
+                    help="Format: postgresql://username:password@host:port/database"
+                )
+                
+                # Test connection button
+                if st.form_submit_button("🔗 Test Connection"):
+                    # Use custom URL if provided, otherwise build from components
+                    if custom_url and custom_url != st.session_state.database_url:
+                        test_url = custom_url
+                    else:
+                        test_url = f"postgresql://{username}:{password}@{host}:{port}/{database}"
+                    
+                    success, error = test_database_connection(test_url)
+                    
+                    if success:
+                        st.session_state.database_url = test_url
+                        st.success("✅ Database connection successful!")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ Connection failed: {error}")
+            
+            # Show current status
+            st.info(f"**Current URL:** {st.session_state.database_url}")
         return None
     else:
         return create_engine(st.session_state.database_url)
@@ -380,6 +382,9 @@ Features:
             key="ai_search_options",
             label_visibility="collapsed"
         )
+    
+    # Store selected menu in session state
+    st.session_state.selected_menu = selected_menu
     
     # Show tool description
     st.markdown("**Tool Info:**")
