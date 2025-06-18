@@ -248,6 +248,16 @@ def process_file(df: pd.DataFrame, filename: str) -> pd.DataFrame:
         df['_area'] = area_name
         area_column = '_area'
 
+    # Check for Media_ID column
+    media_id_variations = ['Media_ID', 'MediaID', 'Media ID', 'Tape ID', 'TapeID', 'Tape_ID', 'ID', 'Serial', 'Number']
+    media_id_column = find_fuzzy_column(df, media_id_variations, threshold=70)
+    
+    if not media_id_column:
+        st.error(f"❌ No Media ID column found in {filename}. This file will be marked but not included in the final table.")
+        st.warning("Expected Media ID column variations: " + ", ".join(media_id_variations))
+        # Return empty DataFrame to indicate this file should not be processed
+        return pd.DataFrame()
+
     # Determine initial data type from filename
     suggested_types = determine_data_type(filename)
       # Create checkboxes for data type selection with unique keys
@@ -379,6 +389,7 @@ def data_type_wise_app():
         
         # Initialize list to store all processed DataFrames
         all_processed_dfs = []
+        files_without_media_id = []
         
         # Process each uploaded file
         for i, uploaded_file in enumerate(uploaded_files):
@@ -397,12 +408,19 @@ def data_type_wise_app():
                         st.success(f"Successfully processed {uploaded_file.name}")
                         all_processed_dfs.append(processed_df)
                     else:
-                        st.error(f"Failed to process {uploaded_file.name}. Please check the file format and required columns.")
+                        st.warning(f"File {uploaded_file.name} was skipped due to missing Media ID column.")
+                        files_without_media_id.append(uploaded_file.name)
                 else:
                     st.error(f"Failed to read {uploaded_file.name}. Please check the file format.")
             
             except Exception as e:
                 st.error(f"Error processing {uploaded_file.name}: {str(e)}")
+        
+        # Show summary of files without Media ID
+        if files_without_media_id:
+            st.subheader("⚠️ Files Skipped (No Media ID Column)")
+            for filename in files_without_media_id:
+                st.write(f"• {filename}")
         
         # Merge all processed DataFrames if any were successfully processed
         if all_processed_dfs:
@@ -413,39 +431,8 @@ def data_type_wise_app():
             
             # Reset Sr. No. to be sequential across all files
             merged_df['Sr. No.'] = range(1, len(merged_df) + 1)
-                # Calculate totals for each data type using proper type conversion
-            def safe_convert_to_int(series):
-                # First replace empty strings with NaN
-                temp = pd.to_numeric(series.replace('', pd.NA), errors='coerce')
-                # Then fill NaN with 0 and convert to int
-                return temp.fillna(0).astype(int)
             
-            acq_total = safe_convert_to_int(merged_df['Acquisition Data: No. of Tapes']).sum()
-            proc_total = safe_convert_to_int(merged_df['Processing Data: No. of Tapes']).sum()
-            interp_total = safe_convert_to_int(merged_df['Interpretation Data: No. of Tapes']).sum()
-            total_datasets = acq_total + proc_total + interp_total
-            
-            # Add summary row to the DataFrame
-            summary_row = pd.DataFrame([{
-                'Sr. No.': '',
-                'Area': 'TOTAL',
-                'Acquisition Data: No. of Tapes': acq_total if acq_total > 0 else '',
-                'Acquisition Data: Start Tape': '',
-                'Acquisition Data: End Tape': '',
-                'Acquisition Data: SAPD Entry': '',
-                'Processing Data: No. of Tapes': proc_total if proc_total > 0 else '',
-                'Processing Data: Start Tape': '',
-                'Processing Data: End Tape': '',
-                'Processing Data: SAPD Entry': '',
-                'Interpretation Data: No. of Tapes': interp_total if interp_total > 0 else '',
-                'Interpretation Data: Start Tape': '',
-                'Interpretation Data: End Tape': '',
-                'Interpretation Data: SAPD Entry': '',
-                'Total Tapes': total_datasets
-            }])
-              # Concatenate the summary row
-            merged_df = pd.concat([merged_df, summary_row], ignore_index=True)
-              # Create an editable dataframe
+            # Create an editable dataframe
             st.write("📝 Edit the data below if needed (double-click cells to edit):")
             edited_df = st.data_editor(
                 merged_df,
@@ -486,19 +473,69 @@ def data_type_wise_app():
                 }
             )
             
-            # Use the edited dataframe for download
-            merged_df = edited_df
+            # Calculate dynamic totals from the edited dataframe (excluding the TOTAL row if it exists)
+            def safe_convert_to_int(series):
+                # First replace empty strings with NaN
+                temp = pd.to_numeric(series.replace('', pd.NA), errors='coerce')
+                # Then fill NaN with 0 and convert to int
+                return temp.fillna(0).astype(int)
             
-            # Download button for merged data
-            csv_data = convert_df_to_csv(merged_df)
+            # Filter out the TOTAL row if it exists
+            data_rows = edited_df[edited_df['Area'] != 'TOTAL'].copy()
+            
+            acq_total = safe_convert_to_int(data_rows['Acquisition Data: No. of Tapes']).sum()
+            proc_total = safe_convert_to_int(data_rows['Processing Data: No. of Tapes']).sum()
+            interp_total = safe_convert_to_int(data_rows['Interpretation Data: No. of Tapes']).sum()
+            total_datasets = acq_total + proc_total + interp_total
+            
+            # Display dynamic totals
+            st.subheader("📊 Dynamic Summary Totals")
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Acquisition Tapes", acq_total)
+            with col2:
+                st.metric("Processing Tapes", proc_total)
+            with col3:
+                st.metric("Interpretation Tapes", interp_total)
+            with col4:
+                st.metric("Total Tapes", total_datasets)
+            
+            # Add or update summary row
+            summary_row = pd.DataFrame([{
+                'Sr. No.': '',
+                'Area': 'TOTAL',
+                'Acquisition Data: No. of Tapes': acq_total if acq_total > 0 else '',
+                'Acquisition Data: Start Tape': '',
+                'Acquisition Data: End Tape': '',
+                'Acquisition Data: SAPD Entry': '',
+                'Processing Data: No. of Tapes': proc_total if proc_total > 0 else '',
+                'Processing Data: Start Tape': '',
+                'Processing Data: End Tape': '',
+                'Processing Data: SAPD Entry': '',
+                'Interpretation Data: No. of Tapes': interp_total if interp_total > 0 else '',
+                'Interpretation Data: Start Tape': '',
+                'Interpretation Data: End Tape': '',
+                'Interpretation Data: SAPD Entry': '',
+                'Total Tapes': total_datasets
+            }])
+            
+            # Combine data rows with summary row for display and download
+            final_df = pd.concat([data_rows, summary_row], ignore_index=True)
+            
+            # Show the final table with totals included
+            st.subheader("📋 Final Output with Totals")
+            st.dataframe(final_df, use_container_width=True)
+            
+            # Download button for final data
+            csv_data = convert_df_to_csv(final_df)
             st.download_button(
-                label="📥 Download Merged Data",
+                label="📥 Download Final Data",
                 data=csv_data,
-                file_name="merged_data_type_wise_processed.csv",
+                file_name="final_data_type_wise_processed.csv",
                 mime="text/csv",
-                key="download_merged_data"
+                key="download_final_data"
             )
         else:
-            st.warning("No files were successfully processed.")
+            st.warning("No files were successfully processed. All files may be missing required Media ID columns.")
     else:
         st.info("Please upload one or more files to begin processing.")
