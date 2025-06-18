@@ -3,7 +3,7 @@ import pandas as pd
 from io import BytesIO
 import docx2pdf
 import os
-import pythoncom
+import platform
 from pathlib import Path
 
 def convert_csv_to_excel(csv_file):
@@ -42,10 +42,6 @@ def convert_docx_to_pdf(docx_file):
     try:
         import tempfile
         import shutil
-        import pythoncom  # Import for COM initialization
-        
-        # Initialize COM in this thread
-        pythoncom.CoInitialize()
         
         # Create a temporary directory using tempfile
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -58,35 +54,21 @@ def convert_docx_to_pdf(docx_file):
                 f.write(docx_file.getvalue())
             
             try:
-                # First attempt: Try using docx2pdf
+                # Use docx2pdf for conversion
                 docx2pdf.convert(str(temp_docx), str(temp_pdf))
                 
                 # Read the PDF file
                 with open(temp_pdf, "rb") as f:
                     pdf_data = f.read()
                     
-            except Exception as word_error:
-                # If docx2pdf fails, try using alternative method with win32com
-                try:
-                    import win32com.client
-                    word = win32com.client.Dispatch('Word.Application')
-                    doc = word.Documents.Open(str(temp_docx))
-                    doc.SaveAs(str(temp_pdf), FileFormat=17)  # 17 represents PDF                    doc.Close()
-                    word.Quit()
-                    
-                    # Read the PDF file
-                    with open(temp_pdf, "rb") as f:
-                        pdf_data = f.read()
-                        
-                except Exception as com_error:
-                    # If both methods fail, inform the user
-                    return None, f"Conversion failed: Both conversion methods failed.\nMethod 1: {str(word_error)}\nMethod 2: {str(com_error)}"
-                finally:
-                    # Cleanup COM
-                    try:
-                        pythoncom.CoUninitialize()
-                    except:
-                        pass
+            except Exception as conversion_error:
+                # If conversion fails, provide helpful error message
+                if platform.system() == "Windows":
+                    error_msg = f"Conversion failed: {str(conversion_error)}\n\nTroubleshooting:\n1. Make sure Microsoft Word is installed\n2. Ensure the document is not corrupted\n3. Try opening the document in Word first"
+                else:
+                    error_msg = f"Conversion failed: {str(conversion_error)}\n\nNote: DOCX to PDF conversion requires LibreOffice or similar software on Linux systems.\nConsider using online converters or installing LibreOffice."
+                
+                return None, error_msg
             
             # Create BytesIO object with PDF data
             output = BytesIO(pdf_data)
