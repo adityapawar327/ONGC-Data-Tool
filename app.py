@@ -74,7 +74,11 @@ with st.sidebar:
     # Add ONGC logo and title to sidebar
     _, center_col, _ = st.columns(3)
     with center_col:
-        st.image("c:/Users/Adity/OneDrive/Desktop/ongc_app/public/ongc (1).jpg", width=100)
+        try:
+            st.image("public/ongc (1).jpg", width=100)
+        except:
+            # Fallback if image is not found
+            st.markdown("### ONGC")
     
     st.markdown("""
         <div style='text-align: center; margin-bottom: 20px;'>
