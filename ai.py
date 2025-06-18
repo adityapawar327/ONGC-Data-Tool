@@ -649,6 +649,44 @@ def comprehensive_quality_check(df):
 
 # Main app
 def ai_chat():
+    st.info("""
+    ### ⚠️ Ollama AI Assistant - Localhost Only
+
+    This AI Assistant feature **only works on your own computer (localhost/self-hosted)**.  
+    It will NOT work on Streamlit Cloud or other remote servers.
+
+    #### **How to use the AI Assistant:**
+
+    1. **Install Ollama**  
+       Download and install Ollama from [https://ollama.com/download](https://ollama.com/download)
+
+    2. **Start Ollama**  
+       Open a terminal and run:
+       ```
+       ollama serve
+       ```
+
+    3. **Pull the deepseek-r1 Model**  
+       In the same terminal, run:
+       ```
+       ollama pull deepseek-r1
+       ```
+
+    4. **Run this Streamlit app locally**  
+       In your project directory, run:
+       ```
+       streamlit run app.py
+       ```
+
+    5. **Use the AI Assistant**  
+       Upload your data and ask questions!
+
+    ---
+
+    **Note:**  
+    - Ollama and the model must be running on the same machine as this app.
+    - This feature will not work on Streamlit Cloud or any remote deployment.
+    """)
     
     st.title("🤖 Excel & CSV Data Assistant")
     st.caption("Powered by Ollama and deepseek-r1:latest • Your local AI data analyst")
