@@ -144,22 +144,18 @@ Ensure all solutions are specific to Excel and include exact menu paths, formula
 # Improved function to convert dataframe to text chunks with better context preservation
 def dataframe_to_text_chunks(df, chunk_size=2000, chunk_overlap=300, max_rows_per_chunk=75):
     """Convert dataframe to text chunks with enhanced context preservation."""
-    df.columns = df.columns.astype(str)
-    total_rows = len(df)
-    
-    chunks = []
+    return df_to_documents(df)
+
+# Convert dataframe to documents
+def df_to_documents(df):
+    docs = []
+    total_rows = len(df)  # Define total_rows here
     
     # Enhanced schema information with sample data
     schema_info = f"DATASET SCHEMA AND STRUCTURE:\n"
     schema_info += f"Total Dimensions: {total_rows} rows × {len(df.columns)} columns\n\n"
     schema_info += "COLUMN DETAILS:\n"
     
-# Convert dataframe to documents
-def df_to_documents(df):
-    docs = []
-    
-    # Schema info
-    schema = f"Dataset: {df.shape[0]} rows × {df.shape[1]} columns\n"
     for col in df.columns:
         dtype = str(df[col].dtype)
         unique_count = df[col].nunique()
@@ -180,7 +176,7 @@ def df_to_documents(df):
         page_content=schema_info, 
         metadata={"chunk_type": "schema", "priority": "high"}
     )
-    chunks.append(schema_doc)
+    docs.append(schema_doc)
     
     # Enhanced statistics with context
     numeric_cols = df.select_dtypes(include=['number']).columns
@@ -212,12 +208,10 @@ def df_to_documents(df):
             page_content=stats_info, 
             metadata={"chunk_type": "statistics", "priority": "medium"}
         )
-        chunks.append(stats_doc)
-        null_pct = (df[col].isnull().sum() / len(df)) * 100
-        schema += f"{col}: {df[col].dtype}, {null_pct:.1f}% null\n"
-    docs.append(Document(page_content=schema))
+        docs.append(stats_doc)
     
     # Process data in chunks with better overlap handling
+    max_rows_per_chunk = 75  # Define this variable
     num_row_chunks = (total_rows + max_rows_per_chunk - 1) // max_rows_per_chunk
     
     for i in range(num_row_chunks):
@@ -251,9 +245,9 @@ def df_to_documents(df):
                 "priority": "high" if i < 2 else "medium"  # Prioritize first chunks
             }
         )
-        chunks.append(chunk_doc)
+        docs.append(chunk_doc)
     
-    return chunks
+    return docs
 
 # Enhanced retrieval with better context management
 def retrieve_docs(db, query, k=6):
