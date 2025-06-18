@@ -9,6 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
 from datetime import datetime
 import re
+import subprocess
 
 # Initialize models
 @st.cache_resource
@@ -670,6 +671,11 @@ def ai_chat():
     if "df" not in st.session_state:
         st.session_state.df = None
     
+    # Place this check at the top of your AI assistant page or before model usage
+    if not check_ollama_model("deepseek-r1"):
+        show_ollama_setup("deepseek-r1")
+        st.stop()
+    
     # File upload
     st.markdown("### 📤 Data Import")
     uploaded_file = st.file_uploader(
@@ -952,6 +958,32 @@ DETAILED FINDINGS
         st.markdown("### 📊 AI Data Assistant")
         st.markdown("Upload a dataset to get started with data analysis and insights.")
         
+
+def check_ollama_model(model_name="deepseek-r1"):
+    try:
+        result = subprocess.run(["ollama", "list"], capture_output=True, text=True)
+        if model_name in result.stdout:
+            return True
+        return False
+    except Exception:
+        return False
+
+def show_ollama_setup(model_name="deepseek-r1"):
+    st.error(f"Failed to connect to Ollama or the '{model_name}' model is not available.")
+    st.markdown(
+        f"""
+        **To use this feature, you need:**
+        1. [Ollama installed and running](https://ollama.com/download)
+        2. The `{model_name}` model pulled
+
+        **To pull the model, run this in your terminal:**
+        ```bash
+        ollama pull {model_name}
+        ```
+        """
+    )
+    if st.button(f"Copy 'ollama pull {model_name}' to clipboard"):
+        st.code(f"ollama pull {model_name}", language="bash")
 
 if __name__ == "__main__":
     ai_chat()
